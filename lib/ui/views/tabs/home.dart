@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+
+import '../../widgets/index.dart';
+
 /// This tab holds main information about the next launch.
 /// It has a countdown widget.
 class HomeTab extends StatefulWidget {
@@ -12,6 +15,8 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
-    return RequestSliverPage();
+    return Scaffold(
+
+    );
   }
 }

@@ -12,6 +12,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  add_2_calendar: ^2.1.0
+  big_tip: ^2.0.0
+  cherry_components: ^0.2.3+1
+  dio: ^4.0.0
   flutter_svg: ^0.22.0
   cupertino_icons: ^1.0.2
   expand_widget: ^2.0.0
