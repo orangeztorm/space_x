@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quick_actions/quick_actions.dart';
 
 import '../tabs/index.dart';
+import '../../../utils/index.dart';
 
 class StartScreen extends StatefulWidget {
   static const route = '/';
@@ -38,22 +39,22 @@ class _StartScreenState extends State<StartScreen> {
         }
       });
 
-      Future.delayed(Duration.zero, () async{
+      Future.delayed(Duration.zero, () async {
         // Setting app shortcuts
         await quickActions.setShortcutItems(<ShortcutItem>[
           ShortcutItem(
             type: 'vehicles',
-            localizedTitle: 'vehicle',
+            localizedTitle: 'spacex.vehicle.icon',
             icon: 'action_vehicle',
           ),
           ShortcutItem(
             type: 'upcoming',
-            localizedTitle: 'upcoming',
+            localizedTitle: 'spacex.upcoming.icon',
             icon: 'action_upcoming',
           ),
           ShortcutItem(
             type: 'latest',
-            localizedTitle: 'latest',
+            localizedTitle: 'spacex.latest.icon',
             icon: 'action_latest',
           ),
         ]);
@@ -82,7 +83,9 @@ class _StartScreenState extends State<StartScreen> {
             ? setState(() => _currentIndex = index)
             : null,
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: context.translate('spacex.home.icon')),
           BottomNavigationBarItem(
               icon: SvgPicture.asset('assets/icons/capsule.svg',
                   colorBlendMode: BlendMode.srcATop,
@@ -95,17 +98,17 @@ class _StartScreenState extends State<StartScreen> {
                       : Theme.of(context).brightness == Brightness.light
                           ? Theme.of(context).primaryColor
                           : Theme.of(context).accentColor),
-              label: 'Vehicle'),
+              label: context.translate('spacex.vehicle.icon')),
           BottomNavigationBarItem(
-            label: 'Upcoming',
+            label: context.translate('spacex.upcoming.icon'),
             icon: Icon(Icons.access_time),
           ),
           BottomNavigationBarItem(
-            label: 'latest',
+            label: context.translate('spacex.latest.icon'),
             icon: Icon(Icons.library_books),
           ),
           BottomNavigationBarItem(
-            label: 'company',
+            label: context.translate('spacex.company.icon'),
             icon: Icon(Icons.location_city),
           ),
         ],

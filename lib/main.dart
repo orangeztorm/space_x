@@ -1,9 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:space_x/ui/views/general/index.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 
 import 'cubits/index.dart';
 import 'repositories/index.dart';
@@ -49,12 +52,35 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SpaceX Go',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: StartScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ThemeCubit()),
+        BlocProvider(create: (_) => ImageQualityCubit()),
+        BlocProvider(create: (_) => BrowserCubit()),
+        BlocProvider(create: (_) => VehicleCubit(vehiclesRepository)),
+        BlocProvider(create: (_) => LaunchesCubit(launchRepository)),
+        BlocProvider(create: (_) => CompanyCubit(companyRepository)),
+        BlocProvider(create: (_) => AchievementsCubit(achievementsRepository)),
+        BlocProvider(create: (_) => ChangelogCubit(changelogRepository)),
+      ],
+      child: BlocConsumer(
+        listener: (context, state) => null,
+        builder: (context, state) => MaterialApp(
+          title: 'SpaceX Go',
+          theme: context.watch<ThemeCubit>().lightTheme,
+          darkTheme: context.watch<ThemeCubit>().darkTheme,
+          themeMode: context.watch<ThemeCubit>().themeMode,
+          onGenerateRoute: Routes.generateRoute,
+          onUnknownRoute: Routes.errorRoute,
+          localizationsDelegates: [
+            FlutterI18nDelegate(
+              translationLoader: FileTranslationLoader(),
+            )..load(null),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate
+          ],
+        ),
+      )
     );
   }
 }

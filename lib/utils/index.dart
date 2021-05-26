@@ -7,3 +7,4 @@ export 'photos.dart';
 export 'api_query.dart';
 export 'launch_utils.dart';
 export 'bloc_obsrver.dart';
+export 'routes.dart';
