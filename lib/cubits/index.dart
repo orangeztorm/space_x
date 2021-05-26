@@ -3,3 +3,7 @@ export 'changelog.dart';
 export 'company.dart';
 export 'launches.dart';
 export 'vehicles.dart';
+export 'theme.dart';
+export 'notifications.dart';
+export 'image_quality.dart';
+export 'browser.dart';
