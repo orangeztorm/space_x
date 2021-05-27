@@ -1,31 +1,30 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:space_x/utils/colors.dart';
+
+import 'colors.dart';
 
 /// Class that contains all the different styles of an app
-class Style{
-  /// custom page transitions
+class Style {
+  /// Custom page transitions
   static final _pageTransitionsTheme = PageTransitionsTheme(
     builders: const {
       TargetPlatform.android: ZoomPageTransitionsBuilder(),
-      TargetPlatform.iOS: CupertinoPageTransitionsBuilder()
-    }
+      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+    },
   );
 
-  /// light style
+  /// Light style
   static final ThemeData light = ThemeData(
     brightness: Brightness.light,
-    primaryColor: light.primaryColor,
-    accentColor: light.accentColor,
+    primaryColor: lightPrimaryColor,
+    accentColor: lightAccentColor,
     pageTransitionsTheme: _pageTransitionsTheme,
     textTheme: GoogleFonts.rubikTextTheme(ThemeData.light().textTheme),
     popupMenuTheme: PopupMenuThemeData(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6)
-      )
-    )
+        borderRadius: BorderRadius.circular(6),
+      ),
+    ),
   );
 
   /// Dark style

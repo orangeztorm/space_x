@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_request_bloc/cubits/index.dart';
-import 'package:flutter_request_bloc/widgets/request_builder.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter_request_bloc/flutter_request_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:row_collection/row_collection.dart';
 
 import 'index.dart';
 
@@ -39,29 +41,33 @@ class SimplePage extends StatelessWidget {
 /// It uses the [SimplePage] widget inside it.
 ///
 /// This page also has state control via a `RequestCubit` parameter.
-class RequestSimplePage extends StatelessWidget {
+class RequestSimplePage<C extends RequestCubit, T> extends StatelessWidget {
   final String title;
   final Widget fab;
-  final RequestWidgetBuilderLoaded childBuilder;
+  final RequestWidgetBuilderLoaded<T> childBuilder;
   final List<Widget> actions;
 
   const RequestSimplePage({
-    Key key,
     @required this.title,
     @required this.childBuilder,
     this.fab,
     this.actions,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: null,
+      onRefresh: () => context.read<C>().loadData(),
       child: SimplePage(
         title: title,
         fab: fab,
         actions: actions,
-        body: RequestBuilder(),
+        body: RequestBuilder<C, T>(
+          onInit: (context, state) => Separator.none(),
+          onLoading: (context, state, value) => LoadingView(),
+          onLoaded: childBuilder,
+          onError: (context, state, error) => ErrorView<C>(),
+        ),
       ),
     );
   }

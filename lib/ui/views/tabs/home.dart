@@ -13,6 +13,17 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  ScrollController _controller;
+  double _offset = 0.0;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ScrollController()
+    ..addListener(() => setState(() => _offset = _controller.offset));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

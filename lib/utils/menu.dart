@@ -1,5 +1,4 @@
-
-
+import '../ui/views/general/index.dart';
 class Menu{
   static const home ={
     'app.menu.about': AboutScreen.route,
