@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:row_collection/row_collection.dart';
 
 import '../../../cubits/index.dart';
 import '../../widgets/index.dart';
@@ -60,9 +62,56 @@ class _HeaderView extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Opacity(
-            opacity: launch.isDateTooTentative && _isNotLandScape ? 1.0 : 0.64,
-        child: SwiperHeader(),
+          opacity: launch.isDateTooTentative && _isNotLandScape ? 1.0 : 0.64,
+          child: SwiperHeader(
+            list: List.from(SpaceXPhotos.home)..shuffle(),
+          ),
         ),
+        if (_isNotLandScape)
+          AnimatedOpacity(
+            opacity: offset > _sliverHeight / 10 ? 0.0 : 1.0,
+            duration: Duration(milliseconds: 350),
+            child: launch.localLaunchDate.isAfter(DateTime.now()) &&
+                    !launch.isDateTooTentative
+                ? LaunchCountDown(
+                    launchDate: launch.localLaunchDate,
+                  )
+                : launch.hasVideo && !launch.isDateTooTentative
+                    ? InkWell(
+                        onTap: () => context.openUrl(launch.getVideo),
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Icon(
+                                Icons.play_arrow,
+                                color: Colors.white,
+                                size: 50,
+                              ),
+                              Separator.smallSpacer(),
+                              Text(
+                                context
+                                    .translate('spacex.home.tab.live_mission'),
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.robotoMono(
+                                  fontSize: 24,
+                                  color: Colors.white,
+                                  shadows: <Shadow>[
+                                    Shadow(
+                                      blurRadius: 4,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Separator.none(),
+          )
       ],
     );
   }
