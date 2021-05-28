@@ -10,3 +10,4 @@ export 'achievement_cell.dart';
 export 'launch_cell.dart';
 export 'dialog_patroen.dart';
 export 'row_tap.dart';
+export 'map_header.dart';
