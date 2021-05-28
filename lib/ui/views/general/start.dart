@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quick_actions/quick_actions.dart';
+import 'package:space_x/cubits/index.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../tabs/index.dart';
 import '../../../utils/index.dart';
@@ -66,14 +68,25 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    try {
+      context.watch<NotificationsCubit>()?.updateNotifications(
+        context,
+        nextLaunch: LaunchUtils.getUpcomingLaunch(
+          context.watch<LaunchesCubit>().state.value,
+        ),
+      );
+    } catch (_) {
+      debugPrint('could set notifications');
+    }
+
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
         children: [
           HomeTab(),
           VehiclesTab(),
-          LaunchesTab(),
-          LaunchesTab(),
+          LaunchesTab(LaunchType.upcoming),
+          LaunchesTab(LaunchType.latest),
           CompanyTab(),
         ],
       ),
