@@ -8,3 +8,4 @@ export 'vehicle_cell.dart';
 export 'profile_image.dart';
 export 'achievement_cell.dart';
 export 'launch_cell.dart';
+export 'dialog_patroen.dart';
