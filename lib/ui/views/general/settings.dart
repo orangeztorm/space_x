@@ -89,7 +89,52 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ]),
             ),
-          )
+          ),
+          Separator.divider(indent: 72),
+          BlocConsumer<BrowserCubit, BrowserType>(
+            listener: (context, state) => Navigator.of(context).pop(),
+            builder: (context, state) => ListCell.icon(
+              icon: Icons.language,
+              title: context.translate('settings.internal_browser.title'),
+              subtitle: context.translate(
+                state == BrowserType.inApp
+                    ? 'settings.internal_browser.internal_browser'
+                    : 'settings.internal_browser.external_browser',
+              ),
+              onTap: () => showBottomRoundDialog(
+                context: context,
+                title: context.translate(
+                  'settings.internal_browser.title',
+                ),
+                children: <Widget>[
+                  RadioCell<BrowserType>(
+                    title: context.translate(
+                      'settings.internal_browser.internal_browser',
+                    ),
+                    groupValue: state,
+                    value: BrowserType.inApp,
+                    onChanged: (value) => updateBrowserType(context, value),
+                  ),
+                  RadioCell<BrowserType>(
+                    title: context.translate(
+                      'settings.internal_browser.external_browser',
+                    ),
+                    groupValue: state,
+                    value: BrowserType.system,
+                    onChanged: (value) => updateBrowserType(context, value),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          HeaderText(context.translate('settings.headers.services')),
+          ListCell.icon(
+            icon: Icons.notifications,
+            title: context.translate('settings.notifications.title'),
+            subtitle: context.translate('settings.notifications.body'),
+            onTap: () => SystemSetting.goto(SettingTarget.NOTIFICATION),
+          ),
+          Separator.divider(indent: 72),
         ],
       ),
     );
