@@ -16,13 +16,13 @@ class VehiclePage extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (context.watch<VehicleCubit>().getVehicle(vehicleId).type) {
       case 'rocket':
-        // return RocketPage(vehicleId);
+        return RocketPage(vehicleId);
       case 'capsule':
-        // return DragonPage(vehicleId);
+        return DragonPage(vehicleId);
       case 'ship':
-        // return ShipPage(vehicleId);
+        return ShipPage(vehicleId);
       case 'roadster':
-        // return RoadsterPage(vehicleId);
+        return RoadsterPage(vehicleId);
       default:
         return ErrorScreen();
     }
