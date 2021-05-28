@@ -187,15 +187,13 @@ class _HomeView extends StatelessWidget {
           'spacex.home.tab.launchpad.body',
           parameters: {'launchpad': launch.launchpad.name},
         ),
-        onTap:
-        // launch.launchpad != null
-        //     ? () => Navigator.pushNamed(
-        //   context,
-        //   LaunchpadPage.route,
-        //   arguments: {'launchId': launch.id},
-        // )
-        //     :
-        null,
+        onTap: launch.launchpad != null
+            ? () => Navigator.pushNamed(
+                  context,
+                  LaunchpadPage.route,
+                  arguments: {'launchId': launch.id},
+                )
+            : null,
       ),
       Separator.divider(indent: 72),
       ListCell.icon(
@@ -231,13 +229,13 @@ class _HomeView extends StatelessWidget {
           title: context.translate('spacex.home.tab.capsule.title'),
           subtitle: capsuleSubtitle(context, launch.rocket.getSinglePayload),
           onTap:
-          // launch.rocket.hasCapsule
-          //     ? () => Navigator.pushNamed(
-          //   context,
-          //   CapsulePage.route,
-          //   arguments: {'launchId': launch.id},
-          // )
-          //     :
+          launch.rocket.hasCapsule
+              ? () => Navigator.pushNamed(
+            context,
+            CapsulePage.route,
+            arguments: {'launchId': launch.id},
+          )
+              :
           null,
         ),
       Separator.divider(indent: 72),
@@ -283,16 +281,16 @@ class _HomeView extends StatelessWidget {
         title: context.translate('spacex.home.tab.landing.title'),
         subtitle: landingSubtitle(context, launch.rocket.getSingleCore),
         onTap:
-        // launch.rocket.getSingleCore.landpad != null
-        //     ? () => Navigator.pushNamed(
-        //   context,
-        //   LandpadPage.route,
-        //   arguments: {
-        //     'launchId': launch.id,
-        //     'coreId': launch.rocket.getSingleCore.id,
-        //   },
-        // )
-        //     :
+        launch.rocket.getSingleCore.landpad != null
+            ? () => Navigator.pushNamed(
+          context,
+          LandpadPage.route,
+          arguments: {
+            'launchId': launch.id,
+            'coreId': launch.rocket.getSingleCore.id,
+          },
+        )
+            :
         null,
       ),
       Separator.divider(indent: 72)
@@ -300,14 +298,14 @@ class _HomeView extends StatelessWidget {
   }
 
   void openCorePage({BuildContext context, String launchId, String coreId}) {
-    // Navigator.pushNamed(
-    //   context,
-    //   CorePage.route,
-    //   arguments: {
-    //     'launchId': launchId,
-    //     'coreId': coreId,
-    //   },
-    // );
+    Navigator.pushNamed(
+      context,
+      CorePage.route,
+      arguments: {
+        'launchId': launchId,
+        'coreId': coreId,
+      },
+    );
   }
 
   void showHeavyDialog(BuildContext context, Launch upcomingLaunch) =>
