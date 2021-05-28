@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:space_x/cubits/index.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:space_x/ui/views/general/index.dart';
 
 class VehiclePage extends StatelessWidget {
   final String vehicleId;
@@ -21,7 +22,7 @@ class VehiclePage extends StatelessWidget {
       case 'roadster':
         return null;
       default :
-        return null;
+        return ErrorScreen();
     }
   }
 }

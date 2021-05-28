@@ -20,17 +20,83 @@ class VehiclesTab extends StatelessWidget {
         title: context.translate('spacex.vehicle.title'),
         headerBuilder: (context, state, value) {
           final photos = [
-            for(final vehicle in value) vehicle.getRandomPhoto()
+            for (final vehicle in value) vehicle.getRandomPhoto()
           ];
-          return SwiperHeader(list: photos.sublist(0,4),);
+          return SwiperHeader(
+            list: photos.sublist(0, 4),
+          );
         },
         popupMenu: Menu.home,
         childrenBuilder: (context, state, value) => [
-          SliverList(delegate: SliverChildBuilderDelegate(
-              (context, index) => VehicleCell(vehicle: value[index],),
-            childCount: value.length
-          ))
+          SliverList(
+              delegate: SliverChildBuilderDelegate(
+                  (context, index) => VehicleCell(
+                        vehicle: value[index],
+                      ),
+                  childCount: value.length))
         ],
+      ),
+      floatingActionButton: RequestBuilder<VehicleCubit, List<Vehicle>>(
+        onLoaded: (context, state, value) => FloatingActionButton(
+          heroTag: null,
+          tooltip: context.translate(
+            'spacex.other.tooltip.search',
+          ),
+          onPressed: () => showSearch(
+              context: context,
+              delegate:
+                  SearchPage<Vehicle>(
+                    items: value,
+                    searchLabel: context.translate(
+                      'spacex.other.tooltip.search',
+                    ),
+                    suggestion: BigTip(
+                      title: Text(
+                        context.translate(
+                          'spacex.vehicle.title',
+                        ),
+                        style: Theme.of(context).textTheme.headline6.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Text(
+                        context.translate(
+                          'spacex.search.suggestion.vehicle',
+                        ),
+                        style: Theme.of(context).textTheme.subtitle1.copyWith(
+                          color: Theme.of(context).textTheme.caption.color,
+                        ),
+                      ),
+                      child: Icon(Icons.search),
+                    ),
+                    failure: BigTip(
+                      title: Text(
+                        context.translate(
+                          'spacex.vehicle.title',
+                        ),
+                        style: Theme.of(context).textTheme.headline6.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Text(
+                        context.translate(
+                          'spacex.search.failure',
+                        ),
+                        style: Theme.of(context).textTheme.subtitle1.copyWith(
+                          color: Theme.of(context).textTheme.caption.color,
+                        ),
+                      ),
+                      child: Icon(Icons.sentiment_dissatisfied),
+                    ),
+                    filter: (vehicle) => [
+                      vehicle.name,
+                      vehicle.year,
+                      vehicle.type,
+                    ],
+                    builder: (vehicle) => VehicleCell(vehicle: vehicle,),
+                  )),
+          child: Icon(Icons.search),
+        ),
       ),
     );
   }
