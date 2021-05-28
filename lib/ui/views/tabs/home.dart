@@ -1,4 +1,7 @@
+import 'package:add_2_calendar/add_2_calendar.dart';
+import 'package:cherry_components/cherry_components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:row_collection/row_collection.dart';
 
@@ -38,7 +41,7 @@ class _HomeTabState extends State<HomeTab> {
       childrenBuilder: (context, state, value) => <Widget>[
         SliverToBoxAdapter(
           child: _HomeView(
-            LaunchUtils.getUpcomingLaunch(value),
+            launch: LaunchUtils.getUpcomingLaunch(value),
           ),
         )
       ],
@@ -115,4 +118,327 @@ class _HeaderView extends StatelessWidget {
       ],
     );
   }
+}
+
+class _HomeView extends StatelessWidget {
+  final Launch launch;
+
+  const _HomeView({Key key, this.launch}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ListCell.icon(
+          icon: Icons.public,
+          title: context.translate(
+            'spacex.home.tab.mission.title',
+            parameters: {'rocket': launch.rocket.name},
+          ),
+          subtitle: payloadSubtitle(context, launch.rocket.payloads),
+          //   onTap: () => Navigator.pushNamed(
+          //     context,
+          //     LaunchPage.route,
+          //     arguments: {'id': launch.id},
+          //   ),
+        ),
+        Separator.divider(indent: 72),
+        ListCell.icon(
+          icon: Icons.event,
+          title: context.translate(
+            'spacex.home.tab.date.title',
+          ),
+          subtitle: launch.tentativeTime
+              ? context.translate(
+                  'spacex.home.tab.date.body_upcoming',
+                  parameters: {'date': launch.getTentativeDate},
+                )
+              : context.translate(
+                  'spacex.home.tab.date.body',
+                  parameters: {
+                    'date': launch.getTentativeDate,
+                    'time': launch.getShortTentativeTime
+                  },
+                ),
+          onTap: !launch.tentativeTime
+              ? () async {
+                  await Add2Calendar.addEvent2Cal(Event(
+                    title: launch.name,
+                    description: launch.details ??
+                        context.translate('spacex.launch.page.no_description'),
+                    location: launch.launchpad.name ??
+                        context.translate('spacex.other.unknown'),
+                    startDate: launch.localLaunchDate,
+                    endDate: launch.localLaunchDate.add(
+                      Duration(minutes: 30),
+                    ),
+                  ));
+                }
+              : null,
+        ),
+        Separator.divider(indent: 72),
+        ListCell.icon(
+          icon: Icons.location_on,
+          title: context.translate('spacex.home.tab.launchpad.title'),
+          subtitle: context.translate(
+            'spacex.home.tab.launchpad.body',
+            parameters: {'launchpad': launch.launchpad.name},
+          ),
+          // onTap: launch.launchpad != null
+          //     ? () => Navigator.pushNamed(
+          //   context,
+          //   LaunchpadPage.route,
+          //   arguments: {'launchId': launch.id},
+          // )
+          //     : null,
+        ),
+        Separator.divider(indent: 72),
+        ListCell.icon(
+          icon: Icons.timer,
+          title: context.translate('spacex.home.tab.static_fire.title'),
+          subtitle: launch.staticFireDate == null
+              ? context.translate('spacex.home.tab.static_fire.body_unknown')
+              : context.translate(
+                  launch.staticFireDate.isBefore(DateTime.now())
+                      ? 'spacex.home.tab.static_fire.body_done'
+                      : 'spacex.home.tab.static_fire.body',
+                  parameters: {'date': launch.getStaticFireDate(context)},
+                ),
+        ),
+        Separator.divider(indent: 72),
+        if (launch.rocket.hasFairings)
+          ListCell.icon(
+            icon: Icons.directions_boat,
+            title: context.translate('spacex.home.tab.fairings.title'),
+            subtitle: fairingSubtitle(context, launch.rocket.fairings),
+          )
+        else
+          ListCell(
+            leading: SvgPicture.asset(
+              'assets/icons/capsule.svg',
+              colorBlendMode: BlendMode.srcATop,
+              width: 40,
+              height: 40,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.black45
+                  : null,
+            ),
+            title: context.translate('spacex.home.tab.capsule.title'),
+            subtitle: capsuleSubtitle(context, launch.rocket.getSinglePayload),
+            // onTap: launch.rocket.hasCapsule
+            //     ? () => Navigator.pushNamed(
+            //   context,
+            //   CapsulePage.route,
+            //   arguments: {'launchId': launch.id},
+            // )
+            //     : null,
+          ),
+        Separator.divider(indent: 72),
+        AbsorbPointer(
+          absorbing: launch.rocket.isFirstStageNull,
+          child: ListCell(
+            leading: SvgPicture.asset(
+              'assets/icons/fins.svg',
+              colorBlendMode: BlendMode.srcATop,
+              width: 40,
+              height: 40,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.black45
+                  : null,
+            ),
+            title: context.translate('spacex.home.tab.first_stage.title'),
+            subtitle: launch.rocket.isHeavy
+                ? context.translate(
+                    launch.rocket.isFirstStageNull
+                        ? 'spacex.home.tab.first_stage.body_null'
+                        : 'spacex.home.tab.first_stage.heavy_dialog.body',
+                  )
+                : coreSubtitle(
+                    context: context,
+                    core: launch.rocket.getSingleCore,
+                    isSideCore:
+                        launch.rocket.isSideCore(launch.rocket.getSingleCore),
+                  ),
+            onTap: !launch.rocket.isFirstStageNull
+                ? () => launch.rocket.isHeavy
+                    ? showHeavyDialog(context, launch)
+                    : openCorePage(
+                        context: context,
+                        launchId: launch.id,
+                        coreId: launch.rocket.getSingleCore.id,
+                      )
+                : null,
+          ),
+        ),
+        Separator.divider(indent: 72),
+        ListCell.icon(
+          icon: Icons.center_focus_weak,
+          title: context.translate('spacex.home.tab.landing.title'),
+          subtitle: landingSubtitle(context, launch.rocket.getSingleCore),
+          // onTap: launch.rocket.getSingleCore.landpad != null
+          //     ? () => Navigator.pushNamed(
+          //           context,
+          //           LandpadPage.route,
+          //           arguments: {
+          //             'launchId': launch.id,
+          //             'coreId': launch.rocket.getSingleCore.id,
+          //           },
+          //         )
+          //     : null,
+        ),
+        Separator.divider(indent: 72)
+      ],
+    );
+  }
+
+  void openCorePage({BuildContext context, String launchId, String coreId}) {
+    // Navigator.pushNamed(
+    //   context,
+    //   CorePage.route,
+    //   arguments: {
+    //     'launchId': launchId,
+    //     'coreId': coreId,
+    //   },
+    // );
+  }
+
+  void showHeavyDialog(BuildContext context, Launch upcomingLaunch) =>
+      showBottomRoundDialog(
+          context: context,
+          title: context.translate(
+            'spacex.home.tab.first_stage.heavy_dialog.title',
+          ),
+          children: [
+            for (final core in upcomingLaunch.rocket.cores)
+              AbsorbPointer(
+                absorbing: core.id == null,
+                child: ListCell(
+                  title: core.id != null
+                      ? context.translate('spacex.dialog.vehicle.title_core',
+                          parameters: {'serial': core.serial ?? null})
+                      : context.translate(
+                          'spacex.home.tab.first_stage.heavy_dialog.core_null_title',
+                        ),
+                  subtitle: coreSubtitle(
+                    context: context,
+                    core: core,
+                    isSideCore: upcomingLaunch.rocket.isSideCore(core),
+                  ),
+                  onTap: () => openCorePage(
+                    context: context,
+                    launchId: upcomingLaunch.id,
+                    coreId: core.id,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ),
+                  dense: true,
+                ),
+              )
+          ]);
+
+  String landingSubtitle(BuildContext context, Core core) {
+    if (core.landingAttempt == null) {
+      return context.translate('spacex.home.tab.landing.body_null');
+    } else if (!core.landingAttempt) {
+      return context.translate('spacex.home.tab.landing.body_expended');
+    } else if (core.landpad == null && core.landingType != null) {
+      return context.translate(
+        'spacex.home.tab.landing.body_type',
+        parameters: {'type': core.landingType},
+      );
+    } else {
+      return context.translate(
+        'spacex.home.tab.landing.body',
+        parameters: {'zone': core.landpad.name},
+      );
+    }
+  }
+
+  String payloadSubtitle(BuildContext context, List<Payload> payloads) {
+    const maxPayload = 3;
+    final buffer = StringBuffer();
+    final payloadList = payloads.sublist(
+      0,
+      payloads.length > maxPayload ? maxPayload : payloads.length,
+    );
+
+    for (int i = 0; i < payloads.length; ++i) {
+      buffer.write(
+        context.translate(
+              'spacex.home.tab.mission.body_payload',
+              parameters: {
+                'name': payloads[i].name,
+                'orbit': payloads[i].orbit
+              },
+            ) +
+            (i + 1 == payloadList.length ? '' : ', '),
+      );
+    }
+
+    return context.translate(
+      'spacex.home.tab.mission.body',
+      parameters: {'payloads': buffer.toString()},
+    );
+  }
+
+  String fairingSubtitle(BuildContext context, FairingsDetails fairing) =>
+      fairing.reused == null && fairing.recoveryAttempt == null
+          ? context.translate('spacex.home.tab.fairings.body_null')
+          : fairing.reused != null && fairing.recoveryAttempt == null
+              ? context.translate(
+                  fairing.reused == true
+                      ? 'spacex.home.tab.fairings.body_reused'
+                      : 'spacex.home.tab.fairings.body_new',
+                )
+              : context.translate(
+                  'spacex.home.tab.fairings.body',
+                  parameters: {
+                    'reused': context.translate(
+                      fairing.reused == true
+                          ? 'spacex.home.tab.fairings.body_reused'
+                          : 'spacex.home.tab.fairings.body_new',
+                    ),
+                    'catched': context.translate(
+                      fairing.recoveryAttempt == true
+                          ? 'spacex.home.tab.fairings.body_catching'
+                          : 'spacex.home.tab.fairings.body_dispensed',
+                    )
+                  },
+                );
+
+  String coreSubtitle({BuildContext context, Core core, bool isSideCore}) =>
+      core.id == null || core.reused == null
+          ? context.translate('spacex.home.tab.first_stage.body_null')
+          : context.translate(
+        'spacex.home.tab.first_stage.body',
+        parameters: {
+          'booster': context.translate(
+            isSideCore
+                ? 'spacex.home.tab.first_stage.side_core'
+                : 'spacex.home.tab.first_stage.booster',
+          ),
+          'reused': context.translate(
+            core.reused
+                ? 'spacex.home.tab.first_stage.body_reused'
+                : 'spacex.home.tab.first_stage.body_new',
+          ),
+        },
+      );
+
+  String capsuleSubtitle(BuildContext context, Payload payload) =>
+      payload.capsule.serial == null
+          ? context.translate('spacex.home.tab.capsule.body_null')
+          : context.translate(
+        'spacex.home.tab.capsule.body',
+        parameters: {
+          'reused': payload.reused
+              ? context.translate(
+            'spacex.home.tab.capsule.body_reused',
+          )
+              : context.translate(
+            'spacex.home.tab.capsule.body_new',
+          )
+        },
+      );
 }
