@@ -23,7 +23,7 @@ Future<void> main() async {
   Bloc.observer = CherryBlocObserver();
 
   final httpClient = Dio();
-  final notificationsCubit = kIsWeb
+  final motificationsCubit = kIsWeb
       ? null
       : NotificationsCubit(
     FlutterLocalNotificationsPlugin(),
@@ -41,10 +41,10 @@ Future<void> main() async {
       iOS: IOSInitializationSettings(),
     ),
   );
-  await notificationsCubit?.init();
+  await motificationsCubit?.init();
 
   runApp(CherryApp(
-    notificationsCubit: notificationsCubit,
+    notificationsCubit: motificationsCubit,
     vehiclesRepository: VehiclesRepository(
       VehiclesService(httpClient),
     ),

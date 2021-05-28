@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 /// Custom sliver app bar used in Sliver views.
 /// It collapses when user scrolls down.
-
 class SliverBar extends StatelessWidget {
   static const double heightRatio = 0.3;
 
@@ -12,8 +11,12 @@ class SliverBar extends StatelessWidget {
   final num height;
   final List<Widget> actions;
 
-  const SliverBar({Key key, this.title, this.header, this.height, this.actions})
-      : super(key: key);
+  const SliverBar({
+    this.title,
+    this.header,
+    this.height = heightRatio,
+    this.actions,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +26,11 @@ class SliverBar extends StatelessWidget {
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
+        // Using title constraining, because Flutter doesn't do this automatically.
+        // Open issue: [https://github.com/flutter/flutter/issues/14227]
         title: ConstrainedBox(
           constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.5,
+            maxWidth: MediaQuery.of(context).size.width * 0.55,
           ),
           child: Text(
             title,

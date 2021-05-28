@@ -6,9 +6,13 @@ extension Translate on BuildContext {
     final String key, {
     final Map<String, String> parameters,
   }) {
-    try{
-      return FlutterI18n.translate(this, key,translationParams: parameters,);
-    }catch (_) {
+    try {
+      return FlutterI18n.translate(
+        this,
+        key,
+        translationParams: parameters,
+      );
+    } catch (_) {
       return key;
     }
   }

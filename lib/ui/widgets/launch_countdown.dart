@@ -11,7 +11,7 @@ import '../../utils/translate.dart';
 class LaunchCountDown extends StatefulWidget {
   final DateTime launchDate;
 
-  const LaunchCountDown({Key key, this.launchDate}) : super(key: key);
+  const LaunchCountDown(this.launchDate);
 
   @override
   _LaunchCountDownState createState() => _LaunchCountDownState();

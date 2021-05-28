@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quick_actions/quick_actions.dart';
-import 'package:space_x/cubits/index.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../tabs/index.dart';
+import '../../../cubits/index.dart';
 import '../../../utils/index.dart';
+import '../tabs/index.dart';
 
+/// This view holds all tabs & its models: home, vehicles, upcoming & latest launches, & company tabs.
 class StartScreen extends StatefulWidget {
   static const route = '/';
 
-  const StartScreen({Key key}) : super(key: key);
-
   @override
-  _StartScreenState createState() => _StartScreenState();
+  State<StatefulWidget> createState() => _StartScreenState();
 }
 
 class _StartScreenState extends State<StartScreen> {
@@ -22,8 +21,10 @@ class _StartScreenState extends State<StartScreen> {
   @override
   void initState() {
     super.initState();
+
     try {
-      // Reading app shortcuts input
+
+
       final QuickActions quickActions = QuickActions();
       quickActions.initialize((type) {
         switch (type) {
@@ -46,17 +47,17 @@ class _StartScreenState extends State<StartScreen> {
         await quickActions.setShortcutItems(<ShortcutItem>[
           ShortcutItem(
             type: 'vehicles',
-            localizedTitle: 'spacex.vehicle.icon',
+            localizedTitle: context.translate('spacex.vehicle.icon'),
             icon: 'action_vehicle',
           ),
           ShortcutItem(
             type: 'upcoming',
-            localizedTitle: 'spacex.upcoming.icon',
+            localizedTitle: context.translate('spacex.upcoming.icon'),
             icon: 'action_upcoming',
           ),
           ShortcutItem(
             type: 'latest',
-            localizedTitle: 'spacex.latest.icon',
+            localizedTitle: context.translate('spacex.latest.icon'),
             icon: 'action_latest',
           ),
         ]);
@@ -80,38 +81,40 @@ class _StartScreenState extends State<StartScreen> {
     }
 
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          HomeTab(),
-          VehiclesTab(),
-          LaunchesTab(LaunchType.upcoming),
-          LaunchesTab(LaunchType.latest),
-          CompanyTab(),
-        ],
-      ),
+      body: IndexedStack(index: _currentIndex, children: [
+        HomeTab(),
+        VehiclesTab(),
+        LaunchesTab(LaunchType.upcoming),
+        LaunchesTab(LaunchType.latest),
+        CompanyTab(),
+      ]),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         onTap: (index) => _currentIndex != index
             ? setState(() => _currentIndex = index)
             : null,
+        currentIndex: _currentIndex,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: context.translate('spacex.home.icon')),
+            label: context.translate('spacex.home.icon'),
+            icon: Icon(Icons.home),
+          ),
           BottomNavigationBarItem(
-              icon: SvgPicture.asset('assets/icons/capsule.svg',
-                  colorBlendMode: BlendMode.srcATop,
-                  width: 24,
-                  height: 24,
-                  color: _currentIndex != 1
-                      ? Theme.of(context).brightness == Brightness.light
-                          ? Theme.of(context).textTheme.caption.color
-                          : Colors.black26
-                      : Theme.of(context).brightness == Brightness.light
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context).accentColor),
-              label: context.translate('spacex.vehicle.icon')),
+            label: context.translate('spacex.vehicle.icon'),
+            icon: SvgPicture.asset(
+              'assets/icons/capsule.svg',
+              colorBlendMode: BlendMode.srcATop,
+              width: 24,
+              height: 24,
+              color: _currentIndex != 1
+                  ? Theme.of(context).brightness == Brightness.light
+                  ? Theme.of(context).textTheme.caption.color
+                  : Colors.black26
+                  : Theme.of(context).brightness == Brightness.light
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).accentColor,
+            ),
+          ),
           BottomNavigationBarItem(
             label: context.translate('spacex.upcoming.icon'),
             icon: Icon(Icons.access_time),

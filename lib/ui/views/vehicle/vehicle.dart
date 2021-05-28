@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:space_x/cubits/index.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:space_x/ui/views/general/index.dart';
+import 'package:provider/provider.dart';
+
+import '../../../cubits/index.dart';
+import '../general/index.dart';
+import 'index.dart';
 
 class VehiclePage extends StatelessWidget {
   final String vehicleId;
@@ -12,16 +14,16 @@ class VehiclePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (context.watch<VehicleCubit>().getVehicle(vehicleId).type){
+    switch (context.watch<VehicleCubit>().getVehicle(vehicleId).type) {
       case 'rocket':
-        return null;
+        // return RocketPage(vehicleId);
       case 'capsule':
-        return null;
+        // return DragonPage(vehicleId);
       case 'ship':
-        return null;
+        // return ShipPage(vehicleId);
       case 'roadster':
-        return null;
-      default :
+        // return RoadsterPage(vehicleId);
+      default:
         return ErrorScreen();
     }
   }

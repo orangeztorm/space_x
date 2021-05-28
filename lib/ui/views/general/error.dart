@@ -4,16 +4,14 @@ import 'package:flutter/material.dart';
 /// Screen that is displayed when the routing system
 /// throws an error (404 screen).
 class ErrorScreen extends StatelessWidget {
-  const ErrorScreen({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BigTip(
-        title: Text('An error occurred'),
-        subtitle: Text('This Page is unavailable'),
+        title: Text('An error ocurred'),
+        subtitle: Text('This page is not available'),
         action: Text('GO BACK'),
-        actionCallback: ()=> Navigator.pop(context),
+        actionCallback: () => Navigator.pop(context),
         child: Icon(Icons.error_outline),
       ),
     );

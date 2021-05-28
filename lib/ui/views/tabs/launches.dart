@@ -8,11 +8,7 @@ import '../../../models/index.dart';
 import '../../../utils/index.dart';
 import '../../widgets/index.dart';
 
-/// This tab holds information a specific type of launches,
-/// upcoming or latest, defined by the model.
-///
-/// /// Variable that determins the type of launches are shown within this view
-
+/// Variable that determins the type of launches are shown within this view
 enum LaunchType { upcoming, latest }
 
 /// This tab holds information a specific type of launches,
@@ -47,7 +43,7 @@ class LaunchesTab extends StatelessWidget {
           return [
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, index) => LaunchCell(launches.elementAt(index)),
+                    (context, index) => LaunchCell(launches.elementAt(index)),
                 childCount: launches.length,
               ),
             ),
@@ -75,14 +71,14 @@ class LaunchesTab extends StatelessWidget {
                         : 'spacex.latest.title',
                   ),
                   style: Theme.of(context).textTheme.headline6.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 subtitle: Text(
                   context.translate('spacex.search.suggestion.launch'),
                   style: Theme.of(context).textTheme.subtitle1.copyWith(
-                        color: Theme.of(context).textTheme.caption.color,
-                      ),
+                    color: Theme.of(context).textTheme.caption.color,
+                  ),
                 ),
                 child: Icon(Icons.search),
               ),
@@ -94,14 +90,14 @@ class LaunchesTab extends StatelessWidget {
                         : 'spacex.latest.title',
                   ),
                   style: Theme.of(context).textTheme.headline6.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 subtitle: Text(
                   context.translate('spacex.search.failure'),
                   style: Theme.of(context).textTheme.subtitle1.copyWith(
-                        color: Theme.of(context).textTheme.caption.color,
-                      ),
+                    color: Theme.of(context).textTheme.caption.color,
+                  ),
                 ),
                 child: Icon(Icons.sentiment_dissatisfied),
               ),
@@ -116,7 +112,7 @@ class LaunchesTab extends StatelessWidget {
                 ...launch.rocket.cores.map((e) => e.landpad?.name),
                 ...launch.rocket.cores.map((e) => e.landpad?.fullName),
                 ...launch.rocket.cores.map(
-                  (e) => e.getBlockData(context),
+                      (e) => e.getBlockData(context),
                 ),
                 ...launch.rocket.cores.map((e) => e.serial),
                 ...launch.rocket.payloads.map((e) => e.capsule?.serial),

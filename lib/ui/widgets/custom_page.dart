@@ -8,17 +8,24 @@ import 'package:row_collection/row_collection.dart';
 import 'index.dart';
 
 typedef RequestListBuilderLoaded<T> = List<Widget> Function(
-    BuildContext context, RequestState<T> state, T value);
+    BuildContext context,
+    RequestState<T> state,
+    T value,
+    );
 
-/// Basic screen with an app bar widget
-/// used when pages doesn't have silvers or reloading.
+/// Basic screen, which includes an [AppBar] widget.
+/// Used when the desired page  't have slivers or reloading.
 class SimplePage extends StatelessWidget {
   final String title;
   final Widget body, fab;
   final List<Widget> actions;
 
-  const SimplePage({Key key, this.title, this.body, this.fab, this.actions})
-      : super(key: key);
+  const SimplePage({
+    @required this.title,
+    @required this.body,
+    this.fab,
+    this.actions,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +44,6 @@ class SimplePage extends StatelessWidget {
   }
 }
 
-/// Basic page which has reloading properties.
-/// It uses the [SimplePage] widget inside it.
-///
-/// This page also has state control via a `RequestCubit` parameter.
 class RequestSimplePage<C extends RequestCubit, T> extends StatelessWidget {
   final String title;
   final Widget fab;
@@ -83,37 +86,40 @@ class SliverPage extends StatelessWidget {
   final ScrollController controller;
 
   const SliverPage({
-    Key key,
     @required this.title,
     @required this.header,
     this.children,
     this.actions,
     this.popupMenu,
     this.controller,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       key: PageStorageKey(title),
       controller: controller,
-      slivers: [
-        SliverBar(title: title, header: header, actions: [
-          if (popupMenu != null)
-            PopupMenuButton<String>(
-              itemBuilder: (context) => [
-                for (final item in popupMenu.keys)
-                  PopupMenuItem(
-                    value: item,
-                    child: Text(item),
-                  )
-              ],
-              onSelected: (text) =>
-                  Navigator.pushNamed(context, popupMenu[text]),
-            ),
-          if (actions != null) ...actions
-        ]),
-        ...children
+      slivers: <Widget>[
+        SliverBar(
+          title: title,
+          header: header,
+          actions: <Widget>[
+            if (popupMenu != null)
+              PopupMenuButton<String>(
+                itemBuilder: (context) => [
+                  for (final item in popupMenu.keys)
+                    PopupMenuItem(
+                      value: item,
+                      child: Text(FlutterI18n.translate(context, item)),
+                    )
+                ],
+                onSelected: (text) =>
+                    Navigator.pushNamed(context, popupMenu[text]),
+              ),
+            if (actions != null) ...actions,
+          ],
+        ),
+        ...children,
       ],
     );
   }
@@ -143,42 +149,45 @@ class RequestSliverPage<C extends RequestCubit, T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-        onRefresh: () => context.read<C>().loadData(),
-        child: RequestBuilder<C, T>(
-          onInit: (context, state) => SliverPage(
-            title: title,
-            header: Separator.none(),
-            actions: actions,
-            popupMenu: popupMenu,
-          ),
-          onLoading: (context, state, value) => SliverPage(
-            title: title,
-            header: value != null
-                ? headerBuilder(context, state, value)
-                : Separator.none(),
-            actions: actions,
-            popupMenu: popupMenu,
-            children: value != null
-                ? childrenBuilder(context, state, value)
-                : [LoadingSliverView()],
-          ),
-          onLoaded: (context, state, value) => SliverPage(
-            controller: controller,
-            title: title,
-            header: headerBuilder(context, state, value),
-            actions: actions,
-            popupMenu: popupMenu,
-            children: childrenBuilder(context, state, value),
-          ),
-          onError: (context, state, error) => SliverPage(
-            controller: controller,
-            title: title,
-            header: Separator.none(),
-            actions: actions,
-            popupMenu: popupMenu,
-            // ignore: prefer_const_literals_to_create_immutables
-            children: [ErrorSliverView<C>()],
-          ),
-        ));
+      onRefresh: () => context.read<C>().loadData(),
+      child: RequestBuilder<C, T>(
+        onInit: (context, state) => SliverPage(
+          controller: controller,
+          title: title,
+          header: Separator.none(),
+          actions: actions,
+          popupMenu: popupMenu,
+        ),
+        onLoading: (context, state, value) => SliverPage(
+          controller: controller,
+          title: title,
+          header: value != null
+              ? headerBuilder(context, state, value)
+              : Separator.none(),
+          actions: actions,
+          popupMenu: popupMenu,
+          children: value != null
+              ? childrenBuilder(context, state, value)
+              : [LoadingSliverView()],
+        ),
+        onLoaded: (context, state, value) => SliverPage(
+          controller: controller,
+          title: title,
+          header: headerBuilder(context, state, value),
+          actions: actions,
+          popupMenu: popupMenu,
+          children: childrenBuilder(context, state, value),
+        ),
+        onError: (context, state, error) => SliverPage(
+          controller: controller,
+          title: title,
+          header: Separator.none(),
+          actions: actions,
+          popupMenu: popupMenu,
+          // ignore: prefer_const_literals_to_create_immutables
+          children: [ErrorSliverView<C>()],
+        ),
+      ),
+    );
   }
 }
